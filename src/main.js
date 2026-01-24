@@ -199,14 +199,14 @@ window.addEventListener('DOMContentLoaded', () => {
             tech: ['UNITY 3D', 'PHOTON PUN 2', 'FIREBASE', 'NAVMESH AI', 'CINEMACHINE', 'NETWORKING'],
             // Linked found images
             images: [
-                '/project-assets/lone-wolf-1.jpg.png',
-                '/project-assets/lone-wolf-2.jpg.png',
-                '/project-assets/lone-wolf-3.jpg.png',
-                '/project-assets/lone-wolf-4.jpg.png',
-                '/project-assets/lone-wolf-5.jpg.png',
-                '/project-assets/lone-wolf-6.jpg.png',
-                '/project-assets/lone-wolf-7.jpg.png',
-                '/project-assets/lone-wolf-8.jpg.png'
+                '/project-assets/lone-wolf-1.jpg',
+                '/project-assets/lone-wolf-2.jpg',
+                '/project-assets/lone-wolf-3.jpg',
+                '/project-assets/lone-wolf-4.jpg',
+                '/project-assets/lone-wolf-5.jpg',
+                '/project-assets/lone-wolf-6.jpg',
+                '/project-assets/lone-wolf-7.jpg',
+                '/project-assets/lone-wolf-8.jpg'
             ]
         },
         'turbo-drive': {
