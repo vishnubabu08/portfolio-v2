@@ -1,0 +1,1170 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --color-bg: #000000;
+  --color-bg-alt: #050505;
+  --color-primary: #00f0ff;
+  /* Electric Cyan */
+  --color-secondary: #ffffff;
+  /* White accents (AAA style) */
+  --color-text: #f0f0f0;
+  --color-text-muted: #666666;
+  --color-glass: rgba(10, 10, 10, 0.8);
+  /* Darker glass */
+  --color-glass-border: rgba(0, 240, 255, 0.2);
+  --color-accent-glow: rgba(0, 240, 255, 0.3);
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+
+  --container-width: 1800px;
+  /* Maximum width */
+  --header-height: 80px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  cursor: none;
+  /* Custom cursor active */
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 18px;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Custom Cursor */
+.cursor-dot,
+.cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-primary);
+  transition: width 0.2s, height 0.2s;
+}
+
+body:hover .cursor-outline {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 240, 255, 0.1);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Utilities */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: var(--color-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 4px;
+  /* Military angular look */
+  padding: 2rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Layout Sections */
+section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  padding: 100px 0;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+/* Sticky Wrapper for Side Ops & Skills */
+.sticky-cluster {
+  position: relative;
+  /* Allows inner sticky items to stick within this bounds */
+}
+
+/* Side Ops (Mini Projects) - Link Hover */
+#mini-projects a.text-primary {
+  display: inline-block;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#mini-projects a.text-primary:hover {
+  color: #fff;
+  text-shadow: 0 0 8px var(--color-primary);
+  transform: translateX(5px);
+  /* Slide right */
+}
+
+/* Side Ops - Sticky Base */
+#mini-projects {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.85);
+  /* Semi-transparent */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid var(--color-glass-border);
+}
+
+/* Skills - Sticky Overlay */
+#skills {
+  position: sticky;
+  /* Sticky to enable stacking over mini-projects */
+  top: 0;
+  z-index: 11;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid var(--color-glass-border);
+}
+
+/* Showcase - Transparent for Bugatti */
+#showcase {
+  position: relative;
+  z-index: 12;
+  /* Ensures it sits above if needed, but since it's transparent, it reveals what's behind.
+                  However, since #skills is in the wrapper, and wrapper ends, 
+                  #skills will scroll UP and away before #showcase fully enters?
+                  No, #showcase comes after #education (which I added after wrapper).
+                  Wait, HTML structure is: Wrapper -> Education -> Showcase.
+                  So Education will also scroll normally.
+                  Showcase comes later.
+                  So Bugatti visibility depends on Education not being stuck.
+                  Education is relative, so it's fine.
+               */
+  background: transparent;
+  pointer-events: none;
+  /* Pass clicks to 3D */
+}
+
+#webgl-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: all;
+  /* Allow orbit controls if needed, but usually we want specific events */
+}
+
+.content-layer {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+  /* Let clicks pass through to 3D where empty */
+}
+
+/* Allow pointer events on interactive UI elements */
+.content-layer .interactive {
+  pointer-events: auto;
+}
+
+/* Header/Nav */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  background: linear-gradient(to bottom, rgba(5, 5, 5, 0.9), transparent);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+nav ul {
+  display: flex;
+  gap: 3rem;
+}
+
+nav a {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  position: relative;
+  transition: color 0.3s;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--color-primary);
+  transition: width 0.3s;
+}
+
+nav a:hover {
+  color: var(--color-primary);
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Hero Section */
+#hero {
+  justify-content: flex-start;
+  padding-left: 10vw;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+h1.hero-title {
+  font-size: 5rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-subtitle::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--color-primary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+}
+
+.btn:hover {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 20px var(--color-accent-glow);
+}
+
+.btn-sm {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.8rem;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-outline:hover {
+  background: var(--color-primary);
+  color: #000;
+}
+
+/* About Section */
+#about {
+  align-items: center;
+  justify-content: center;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  /* Removed align-items: center to allow stretch (equal height) */
+}
+
+.profile-card {
+  position: relative;
+  /* Height auto/100% to match sibling via Grid alignment */
+  height: 100%;
+  min-height: 400px;
+  /* Minimum height safety */
+
+  /* Restoring Visuals */
+  /* Restoring Visuals */
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  /* Very Faint Border */
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  /* Enable Hover Interactivity */
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  background: rgba(0, 0, 0, 0.2);
+  /* Subtle base */
+}
+
+/* Sci-Fi Corner Brackets - Handled by .showcase-brackets class now */
+
+
+
+/* Additional corners using overlay pseudo-elements if needed, 
+   but let's start with 2 strategic corners for style. */
+
+/* Clean Profile Heading */
+.profile-heading {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  margin: 0;
+  font-size: 0.9rem;
+  font-family: var(--font-display);
+  color: var(--color-primary);
+  opacity: 0.8;
+  letter-spacing: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.25rem 0.5rem;
+  text-shadow: 0 0 10px var(--color-primary);
+  z-index: 2;
+}
+
+/* Clean Overlay (No Border) */
+.profile-overlay {
+  display: block;
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  z-index: 1;
+}
+
+/* Hover Animations for About Section */
+.profile-text-content,
+.profile-card {
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.profile-text-content:hover,
+.profile-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 40px rgba(0, 240, 255, 0.15);
+  border-color: var(--color-primary);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+/* Holographic Frame (Replaces Brackets) */
+.showcase-brackets {
+  position: relative;
+  /* Full Border Design */
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+  background: rgba(0, 5, 10, 0.4);
+  /* Darker base */
+}
+
+/* Holographic Frame (Clean - No Corners) */
+.showcase-brackets {
+  position: relative;
+  /* Full Border Design */
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+  background: rgba(0, 5, 10, 0.4);
+  /* Darker base */
+  transition: all 0.3s ease;
+}
+
+/* Hover Animation: Simple Glow */
+.showcase-brackets:hover {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+  background: rgba(0, 10, 20, 0.1);
+  /* More transparent */
+}
+
+/* Add extra corners via child elements if needed, or simple box-shadow for full effect?
+   Let's add 2 more corners using a spanned element or box-shadow hack, 
+   or just keep it diagnoal (Cyberpunk style often uses just 2 corners). 
+   Let's add 2 more using a span.corner-brackets inside HTML?
+   No, let's use box-shadow on pseudo-elements or multiple backgrounds.
+   Actually, let's just use the diagonal ones for valid "Showcase" feel.
+   Or... "Showcase Container" usually implies 4 corners.
+   Let's add a helper element in HTML if we want 4 corners. 
+   For now, simple diagonal is cleaner. Let's add glow. */
+
+.showcase-brackets::before,
+.showcase-brackets::after {
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+
+/* Section Headers */
+.section-header {
+  margin-bottom: 2rem;
+}
+
+/* Specific Override for Mission Log */
+#projects .section-header h2 {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+
+
+.header-line {
+  width: 50px;
+  height: 4px;
+  background-color: var(--color-primary);
+  margin-top: 0.5rem;
+}
+
+/* Projects Section */
+
+
+/* Project Cards */
+.project-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  /* Ensure flips are smooth */
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* Strict 2x2 Layout */
+  gap: 4rem 8rem;
+  /* Massive horizontal spacing */
+  perspective: 1000px;
+}
+
+@media (max-width: 768px) {
+
+  .project-grid,
+  #mini-project-grid,
+  .skills-grid {
+    grid-template-columns: 1fr;
+    /* Stack on mobile */
+  }
+}
+
+#mini-project-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.project-card {
+  height: auto;
+  /* Let content define height */
+  min-height: 250px;
+  /* Shorter baseline */
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.front-face {
+  width: 100%;
+  height: auto;
+  /* Adapt to content */
+  min-height: 250px;
+  /* Match base */
+  position: relative;
+  /* Dominate the stack height */
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  /* Hide front when flipped? Yes, usually. */
+  transform: translateZ(0);
+  /* Ensure it sits on the plane */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Inherit layout from old glass-panel use */
+  padding: 1.5rem;
+  /* Re-apply padding if glass-panel usually handles it? No, glass-panel usually has padding. */
+}
+
+/* Ensure glass-panel generic style handles the visuals */
+/* .glass-panel is likely defined elsewhere, checking... */
+
+.project-card>* {
+  /* No backface hidden needed if we swap content on front */
+  /* But helps with depth */
+  backface-visibility: hidden;
+}
+
+.project-card:hover {
+  /* No transform conflict */
+  border-color: var(--color-primary);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+/* Preview Video Helper Label */
+.preview-header {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  /* Above video */
+  background: var(--color-primary);
+  color: #000;
+  padding: 4px 12px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  font-weight: bold;
+  pointer-events: none;
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--color-primary);
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.project-info h3 {
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Showcase Section */
+#showcase {
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding-right: 5vw;
+  text-align: right;
+}
+
+.showcase-info {
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.8));
+  padding: 2rem;
+  border-right: 4px solid var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.showcase-info:hover {
+  background: linear-gradient(90deg, transparent, rgba(0, 20, 30, 0.9));
+  border-right-color: var(--color-primary);
+  box-shadow: inset -20px 0 40px rgba(0, 240, 255, 0.1);
+  transform: translateX(-5px);
+}
+
+/* Contact */
+#contact {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.social-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.social-link {
+  font-size: 1.2rem;
+  font-family: var(--font-display);
+  padding: 1rem 2rem;
+  border: 1px solid var(--color-glass-border);
+  transition: all 0.3s;
+}
+
+.social-link:hover {
+  background: var(--color-primary);
+  color: #000;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary);
+  transform: translateY(-3px);
+}
+
+/* Loading Overlay */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s;
+}
+
+.loader-text {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 5px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-glass-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+
+/* Car Showcase Labels */
+.relative-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.car-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.car-label.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.label-text {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--color-primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.label-line {
+  width: 2px;
+  height: 50px;
+  background: var(--color-primary);
+  margin: 5px 0;
+}
+
+/* Specific Label Adjustments */
+.id-engine .label-line {
+  /* Connecting line down to car */
+  height: 80px;
+  background: linear-gradient(to bottom, var(--color-primary), transparent);
+}
+
+.id-aero {
+  flex-direction: column-reverse;
+}
+
+.id-aero .label-line {
+  background: linear-gradient(to top, var(--color-primary), transparent);
+}
+
+
+/* --- NEW: AAA GAME UI STYLES --- */
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.header-line {
+  flex-grow: 1;
+  height: 2px;
+  background: linear-gradient(to right, var(--color-primary), transparent);
+  position: relative;
+}
+
+.header-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-primary);
+}
+
+/* Projects / Mission Log */
+.card-decoration {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-primary);
+  transition: all 0.3s;
+  pointer-events: none;
+  /* Fix: Allow clicks to pass through */
+}
+
+.card-decoration.top-left {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.card-decoration.bottom-right {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.project-card:hover .card-decoration {
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.project-status {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--color-glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.tech-stack {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.tech-stack span {
+  font-size: 0.7rem;
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--color-primary);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-glass-border);
+}
+
+/* Skills / Loadout */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* Enforce 3 columns */
+  gap: 2rem;
+}
+
+/* Education Section Specific - 2 items, so 2 columns looks centered */
+#education .skills-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.skill-category {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.skill-category:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.2);
+  border-color: var(--color-primary);
+  background: rgba(0, 240, 255, 0.05);
+  /* Slight tint */
+}
+
+.skill-category h4 {
+  border-bottom: 1px solid var(--color-primary);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary);
+}
+
+.skill-bar-group {
+  margin-bottom: 1.5rem;
+}
+
+.skill-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.skill-progress {
+  width: 100%;
+  height: 6px;
+  background: #111;
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-progress .fill {
+  height: 100%;
+  background: var(--color-primary);
+  position: relative;
+  /* Filling Animation */
+  max-width: 0;
+  transition: max-width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Trigger animation on card hover */
+.skill-category:hover .skill-progress .fill {
+  max-width: 100%;
+}
+
+/* Stripes pattern on progress bar */
+.skill-progress .fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 5px,
+      rgba(0, 0, 0, 0.5) 5px,
+      rgba(0, 0, 0, 0.5) 10px);
+}
+
+/* Contact Form Inputs */
+.contact-form {
+  transition: all 0.3s ease;
+}
+
+.contact-form:hover {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+  border-color: var(--color-primary) !important;
+  transform: translateY(-5px);
+  background: rgba(0, 20, 30, 0.6);
+}
+
+.cyber-input {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--color-glass-border);
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.cyber-input:hover {
+  border-color: rgba(0, 240, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.cyber-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.cyber-input::placeholder {
+  color: #444;
+}
+
+/* Link Hover Effects */
+.project-links a {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.project-links a:hover {
+  background: rgba(0, 240, 255, 0.15);
+  text-shadow: 0 0 8px var(--color-primary);
+  transform: translateX(5px);
+  color: #fff;
+}
+
+/* --- PROJECT DETAILS MODAL --- */
+.full-intel-btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-glass-border);
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-sm:hover {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  background: rgba(10, 15, 20, 0.95);
+  border: 1px solid var(--color-primary);
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 0 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: 1px solid var(--color-glass-border);
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: var(--color-primary);
+  color: #000;
+}
+
+.modal-header {
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  /* No special mobile override needed if main is flex-col */
+}
+
+.modal-gallery {
+  width: 100%;
+  height: 350px;
+  /* Fixed height for horizontal strip */
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed var(--color-glass-border);
+  display: flex;
+  flex-direction: row;
+  /* Horizontal alignment */
+  gap: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  /* Prevent wrapping */
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.modal-gallery::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+.gallery-placeholder {
+  min-width: 300px;
+  /* Ensure placeholder has width in horizontal flex */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  border: 1px solid var(--color-glass-border);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.modal-img {
+  height: 100%;
+  /* Full height of gallery strip */
+  width: auto;
+  /* Maintain aspect ratio */
+  border: 1px solid var(--color-glass-border);
+  flex-shrink: 0;
+  /* Prevent shrinking */
+  object-fit: cover;
+}
+
+
+
+.modal-img:hover {
+  border-color: var(--color-primary);
+}
+
+.modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal-desc {
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.tech-stack.large span {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+}
+
+/* Fix for CV Button Hover Visibility */
+#showcase .btn:hover {
+  color: #000 !important;
+  background: var(--color-primary);
+  box-shadow: 0 0 20px var(--color-primary);
+}
+
+/* Cross-Card Preview Video Border */
+.cross-preview-video {
+  border: 2px solid var(--color-primary);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
