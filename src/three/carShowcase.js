@@ -36,7 +36,9 @@ export function createCarShowcase() {
         const model = gltf.scene;
 
         // Initial transforms
-        model.scale.set(0.8, 0.8, 0.8); // Reduced from 1.5
+        const isMobile = window.innerWidth < 768;
+        const scale = isMobile ? 0.45 : 0.8;
+        model.scale.set(scale, scale, scale);
         model.position.set(0, 0, 0);
 
         // Enhance Materials

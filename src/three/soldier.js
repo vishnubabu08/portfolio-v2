@@ -19,8 +19,10 @@ export function createSoldierScene() {
     const model = gltf.scene;
 
     // Scale and Position
-    model.scale.set(10.0, 10.0, 10.0);
-    model.position.set(0, -8.0, 0); // Reverted back to -8.0 as requested
+    const isMobile = window.innerWidth < 768;
+    const scale = isMobile ? 6.0 : 10.0;
+    model.scale.set(scale, scale, scale);
+    model.position.set(0, -8.0, 0);
 
     // Traverse to fix materials
     model.traverse((child) => {
