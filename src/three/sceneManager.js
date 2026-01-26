@@ -39,7 +39,10 @@ export class SceneManager {
         this.scene.fog = new THREE.FogExp2(0x000000, 0.02);
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.set(0, 0, 5);
+
+        // Mobile Adjustment: Move camera back to reduce "zoom" effect in portrait mode
+        const isMobile = window.innerWidth < 768;
+        this.camera.position.set(0, 0, isMobile ? 8 : 5);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
