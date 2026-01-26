@@ -154,32 +154,23 @@ export class SceneManager {
 
         if (!this.soldierGroup || !this.profileTarget) return;
 
-        const heroPos = new THREE.Vector3(1.5, 0, 0);
+        const isMobile = window.innerWidth < 768;
+        const heroPos = isMobile ? new THREE.Vector3(0, 0.5, 0) : new THREE.Vector3(1.5, 0, 0);
         const scrollY = window.scrollY;
 
         // Get Profile Card Position in World Space
         const profilePos = this.get3DPositionForDomElement(this.profileTarget);
-        // Fine tune Z for profile (pop out slightly)
-        profilePos.z = 0; // Keep at 0 to ensure it matches the plane where we calculated x/y 
-        // If we pull it to z=2, the perspective projection shifts it off-center relative to the DOM element
-        // So we should either recalculate for Z=2 or keep it at Z=0. 
-        // Let's use Z=2 but correct the X/Y projection for that depth.
+        // Fine tune Z for profile
+        profilePos.z = 0.0;
 
-        // BETTER APPROACH: Recalculate projection for specific depth if needed.
-        // For now, let's stick closer to 0 for better alignment accuracy, 
-        // or ensure get3DPositionForDomElement takes depth into account.
-
-        // Actually, get3DPositionForDomElement calculates for depth=0 (relative to camera position not being acted upon?).
-        // Let's look at get3DPositionForDomElement again. It uses `this.camera.position.z - 0`.
-        // If we want it at Z=2, we should calculate for distance `this.camera.position.z - 2`.
-
-        // Let's just adjust the Z here and if it's off, we fix the function.
-        // But for "exact center", Z=0 (the plane of calculation) is safest.
-        profilePos.z = 0.0; // Reset to layout plane (Original)
-        profilePos.x -= 0.3; // Moved Right (was -0.6)
-
-        // ADJUSTMENT: User requested "Higher" at end of scroll
-        profilePos.y += 1.0; // Restored original height offset
+        // Mobile-specific offsets for profile target
+        if (isMobile) {
+            profilePos.x = 0; // Force center
+            profilePos.y += 0.5; // Slight lift
+        } else {
+            profilePos.x -= 0.3; // Desktop offset
+            profilePos.y += 1.0; // Desktop offset
+        }
 
         // Interpolate based on scroll
         const heroHeight = window.innerHeight;
