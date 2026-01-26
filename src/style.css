@@ -1221,19 +1221,20 @@ h1.hero-title {
   }
 
   .header-line {
-    display: none;
-    /* simple removal for mobile clean look */
+    display: block;
+    /* Restored */
+    flex-grow: 1;
   }
 
-  /* Header / Nav */
+  /* Header / Nav - Keep Compact but Styled */
   header {
-    padding: 0.5rem;
-    /* Tighter padding */
+    padding: 0.5rem 1rem;
     height: auto;
     background: rgba(5, 5, 5, 0.95);
     flex-direction: column;
+    align-items: flex-start;
+    /* Left align logo */
     gap: 0.5rem;
-    position: relative;
   }
 
   .logo {
@@ -1243,17 +1244,17 @@ h1.hero-title {
 
   nav ul {
     gap: 0.5rem;
-    /* Tighter gap */
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Left align links */
     width: 100%;
+    padding-left: 0;
   }
 
   nav a {
-    font-size: 0.7rem;
-    /* Smaller font */
+    font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     white-space: nowrap;
@@ -1262,10 +1263,11 @@ h1.hero-title {
 
   /* Hero Section */
   #hero {
-    padding-left: 0;
-    justify-content: center;
-    align-items: flex-end;
-    /* Push content to bottom */
+    padding-left: 1rem;
+    /* Add some left padding back */
+    justify-content: flex-start;
+    /* Left align content */
+    align-items: center;
     padding-bottom: 50px;
     position: relative;
   }
