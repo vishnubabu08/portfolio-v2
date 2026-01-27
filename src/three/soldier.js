@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export function createSoldierScene() {
+export function createSoldierScene(loadingManager) {
   const group = new THREE.Group();
 
   // --- MATS (Keep for particles/lighting) ---
@@ -11,7 +11,7 @@ export function createSoldierScene() {
   const headGroup = new THREE.Group();
   group.add(headGroup);
 
-  const loader = new GLTFLoader();
+  const loader = new GLTFLoader(loadingManager);
   // Path relative to /public
   const modelPath = '/ghost-mask (1)/source/Head2.glb';
 

@@ -34,6 +34,27 @@ export class SceneManager {
     }
 
     init() {
+        // --- LOADING MANAGER ---
+        this.loadingManager = new THREE.LoadingManager();
+        const loaderScreen = document.getElementById('loading-screen');
+        const loaderProgress = document.querySelector('.loader-progress');
+
+        this.loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            if (loaderProgress) {
+                const percentage = Math.floor((itemsLoaded / itemsTotal) * 100);
+                loaderProgress.innerText = `${percentage}%`;
+            }
+        };
+
+        this.loadingManager.onLoad = () => {
+            if (loaderScreen) {
+                loaderScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loaderScreen.style.display = 'none';
+                }, 500);
+            }
+        };
+
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x000000); // Deep Black
         this.scene.fog = new THREE.FogExp2(0x000000, 0.02);
@@ -44,11 +65,16 @@ export class SceneManager {
         const isMobile = window.innerWidth < 768;
         this.camera.position.set(0, 0, isMobile ? 8 : 5);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // OPTIMIZATION: Cap Pixel Ratio to 1.5 max (or 1 on mobile) to reduce lag on high-res screens
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
+
+        this.renderer.shadowMap.enabled = !isMobile; // Disable shadows on mobile for performance
+        if (!isMobile) {
+            this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        }
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
         // Environment Map (Critical for PBR Materials like Car Paint)
@@ -62,14 +88,14 @@ export class SceneManager {
     }
 
     setupScenes() {
-        // 1. Ghost Head (Soldier Group)
-        this.soldierGroup = createSoldierScene();
+        // 1. Ghost Head (Soldier Group) - Pass LoadingManager
+        this.soldierGroup = createSoldierScene(this.loadingManager);
         // Initial Hero Position
         this.soldierGroup.position.set(1.5, 0, 0);
         this.scene.add(this.soldierGroup);
 
-        // 2. Car Showcase
-        this.carShowcase = createCarShowcase();
+        // 2. Car Showcase - Pass LoadingManager
+        this.carShowcase = createCarShowcase(this.loadingManager);
         this.carShowcase.position.set(0, -30, 0);
         this.scene.add(this.carShowcase);
 

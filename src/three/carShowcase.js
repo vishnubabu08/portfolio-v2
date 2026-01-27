@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export function createCarShowcase() {
+export function createCarShowcase(loadingManager) {
     const group = new THREE.Group();
 
     // --- GARAGE ENVIRONMENT (Floor) ---
@@ -28,7 +28,7 @@ export function createCarShowcase() {
     // Attach to userData so SceneManager can rotate it
     group.userData.carModel = carGroup;
 
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(loadingManager);
     // Path relative to /public
     const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
 
