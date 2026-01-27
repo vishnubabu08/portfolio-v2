@@ -19,10 +19,10 @@ export class DinoGame {
         this.player = {
             x: 50,
             y: 0, // Will be set in resize
-            width: 30,
-            height: 30,
+            width: 40,  // Slightly wider for Dino
+            height: 40, // Slightly taller
             dy: 0,
-            jumpForce: 12,
+            jumpForce: 13,
             grounded: true,
             color: '#00f0ff'
         };
@@ -100,12 +100,7 @@ export class DinoGame {
 
     jump() {
         if (!this.isPlaying) {
-            if (this.gameOver) {
-                // Restart logic handled by button, but space can trigger too
-                // document.getElementById('restart-btn').click();
-            } else {
-                this.start();
-            }
+            this.start();
             return;
         }
 
@@ -149,11 +144,12 @@ export class DinoGame {
             obs.x -= this.gameSpeed;
 
             // Collision Detection (AABB)
+            // Shrink hitbox slightly to be forgiving
             if (
-                this.player.x < obs.x + obs.width &&
-                this.player.x + this.player.width > obs.x &&
-                this.player.y < obs.y + obs.height &&
-                this.player.y + this.player.height > obs.y
+                this.player.x + 5 < obs.x + obs.width - 5 &&
+                this.player.x + this.player.width - 5 > obs.x + 5 &&
+                this.player.y + 5 < obs.y + obs.height - 5 &&
+                this.player.y + this.player.height - 5 > obs.y + 5
             ) {
                 this.handleGameOver();
             }
@@ -200,20 +196,12 @@ export class DinoGame {
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
 
-        // Draw Player (Neon Box)
-        this.ctx.shadowBlur = 10;
-        this.ctx.shadowColor = this.player.color;
-        this.ctx.fillStyle = this.player.color;
-        this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
-        this.ctx.shadowBlur = 0;
+        // Draw Player (Dino Sprite)
+        this.drawDino(this.player.x, this.player.y, this.player.width, this.player.height, this.player.color);
 
-        // Draw Obstacles (Red/Orange Spikes)
-        this.ctx.fillStyle = '#ff003c';
+        // Draw Obstacles (Cactus Sprite)
         this.obstacles.forEach(obs => {
-            this.ctx.shadowBlur = 10;
-            this.ctx.shadowColor = '#ff003c';
-            this.ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-            this.ctx.shadowBlur = 0;
+            this.drawCactus(obs.x, obs.y, obs.width, obs.height, '#ff003c');
         });
 
         // Draw Particles
@@ -223,6 +211,56 @@ export class DinoGame {
             this.ctx.fillRect(p.x, p.y, p.size, p.size);
             this.ctx.globalAlpha = 1.0;
         });
+    }
+
+    drawDino(x, y, w, h, color) {
+        this.ctx.fillStyle = color;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = color;
+
+        // Cyber Dino (Blocky)
+        // Head
+        this.ctx.fillRect(x + w * 0.4, y, w * 0.6, h * 0.35);
+        // Eye (White)
+        this.ctx.fillStyle = '#000';
+        this.ctx.fillRect(x + w * 0.55, y + h * 0.05, w * 0.1, h * 0.1);
+
+        this.ctx.fillStyle = color;
+        // Body (L shape)
+        this.ctx.fillRect(x, y + h * 0.35, w * 0.5, h * 0.45); // Rear body
+        this.ctx.fillRect(x + w * 0.3, y + h * 0.35, w * 0.3, h * 0.45); // Chest
+
+        // Tiny Arms
+        this.ctx.fillRect(x + w * 0.6, y + h * 0.45, w * 0.2, h * 0.1);
+
+        // Legs (Animated based on X or time)
+        const t = Date.now();
+        const leg1h = (Math.sin(t * 0.02) > 0) ? h * 0.2 : h * 0.1;
+        const leg2h = (Math.sin(t * 0.02) < 0) ? h * 0.2 : h * 0.1;
+
+        this.ctx.fillRect(x + w * 0.1, y + h * 0.8, w * 0.15, leg1h);
+        this.ctx.fillRect(x + w * 0.4, y + h * 0.8, w * 0.15, leg2h);
+
+        this.ctx.shadowBlur = 0;
+    }
+
+    drawCactus(x, y, w, h, color) {
+        this.ctx.fillStyle = color;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = color;
+
+        // Main Stem
+        this.ctx.fillRect(x + w * 0.35, y, w * 0.3, h);
+
+        // Left Arm
+        this.ctx.fillRect(x, y + h * 0.3, w * 0.4, h * 0.1);
+        this.ctx.fillRect(x, y + h * 0.1, w * 0.1, h * 0.3); // tip up
+
+        // Right Arm
+        this.ctx.fillRect(x + w * 0.6, y + h * 0.4, w * 0.4, h * 0.1);
+        this.ctx.fillRect(x + w * 0.9, y + h * 0.2, w * 0.1, h * 0.3); // tip up
+
+        this.ctx.shadowBlur = 0;
     }
 
     animate(time) {
