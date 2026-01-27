@@ -1435,3 +1435,63 @@ h1.hero-title {
   opacity: 0;
   pointer-events: none;
 }
+
+/* --- GAME OVERLAY --- */
+.game-container {
+  max-width: 800px;
+  width: 95%;
+  padding: 1rem;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.score-board {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+#game-canvas-wrapper {
+  position: relative;
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+#dino-game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.game-screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.game-screen-overlay p {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  animation: pulse 1s infinite alternate;
+}
+
+.game-screen-overlay p.small {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  animation: none;
+}

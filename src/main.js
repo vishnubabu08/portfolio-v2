@@ -402,4 +402,59 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    // --- FUNZONE (DINO GAME) ---
+    const funzoneBtn = document.getElementById('enter-funzone-btn');
+    const gameOverlay = document.getElementById('game-overlay');
+    const gameCloseBtn = document.getElementById('game-close-btn');
+    const restartBtn = document.getElementById('restart-btn');
+
+    let dinoGameInstance = null;
+    let isGameModuleLoaded = false;
+
+    if (funzoneBtn && gameOverlay) {
+        funzoneBtn.addEventListener('click', async () => {
+            gameOverlay.classList.add('active');
+            lenis.stop(); // Stop scrolling
+
+            if (!isGameModuleLoaded) {
+                const { DinoGame } = await import('./games/dino-runner/DinoGame.js');
+                dinoGameInstance = new DinoGame('dino-game-canvas');
+                isGameModuleLoaded = true;
+            }
+
+            // Small delay to ensure canvas is sized
+            setTimeout(() => {
+                if (dinoGameInstance) {
+                    dinoGameInstance.resize();
+                    dinoGameInstance.reset();
+                    dinoGameInstance.draw(); // Draw initial state
+                }
+            }, 100);
+        });
+
+        const closeGame = () => {
+            gameOverlay.classList.remove('active');
+            lenis.start(); // Resume scrolling
+            if (dinoGameInstance) {
+                dinoGameInstance.stop();
+            }
+        };
+
+        gameCloseBtn.addEventListener('click', closeGame);
+
+        // Close on outside click
+        gameOverlay.addEventListener('click', (e) => {
+            if (e.target === gameOverlay) closeGame();
+        });
+
+        // Restart
+        if (restartBtn) {
+            restartBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (dinoGameInstance) dinoGameInstance.start();
+            });
+        }
+    }
+
 });
