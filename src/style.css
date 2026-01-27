@@ -1496,8 +1496,60 @@ h1.hero-title {
   animation: pulse 1s infinite alternate;
 }
 
-.game-screen-overlay p.small {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  animation: none;
+/* --- CUSTOM CURSOR --- */
+body,
+html {
+  cursor: none;
+  /* Hide default cursor */
+}
+
+/* Fallback for touch devices */
+@media (hover: none) {
+
+  body,
+  html {
+    cursor: auto;
+  }
+
+  .cursor-dot,
+  .cursor-outline {
+    display: none;
+  }
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+/* Hover State */
+body.hovering .cursor-outline {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(0, 240, 255, 0.1);
+  border-color: transparent;
+  backdrop-filter: blur(2px);
 }

@@ -457,4 +457,49 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+    // --- CUSTOM CURSOR LOGIC ---
+    if (window.innerWidth > 768) {
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        let cursorX = 0;
+        let cursorY = 0;
+        let outlineX = 0;
+        let outlineY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+
+            // Dot moves instantly
+            cursorDot.style.left = `${cursorX}px`;
+            cursorDot.style.top = `${cursorY}px`;
+        });
+
+        const animateCursor = () => {
+            // LERP: Smoothly interpolate outline towards cursor position
+            // Factor 0.15 gives a nice weight/lag
+            const dx = cursorX - outlineX;
+            const dy = cursorY - outlineY;
+
+            outlineX += dx * 0.15;
+            outlineY += dy * 0.15;
+
+            cursorOutline.style.left = `${outlineX}px`;
+            cursorOutline.style.top = `${outlineY}px`;
+
+            requestAnimationFrame(animateCursor);
+        };
+
+        animateCursor();
+
+        // Hover Effects (Scale up)
+        const interactiveElements = document.querySelectorAll('a, button, input, textarea, .project-card, .game-container');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+    }
+
 });
