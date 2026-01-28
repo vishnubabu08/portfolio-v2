@@ -40,10 +40,19 @@ export class DinoGame {
                 this.handleInput();
             }
         });
-        this.canvas.addEventListener('touchstart', (e) => {
-            if (e.cancelable) e.preventDefault();
-            this.handleInput();
-        }, { passive: false });
+        // Better Mobile Support: Listen on the overlay to catch taps anywhere
+        const gameOverlay = document.getElementById('game-overlay');
+        if (gameOverlay) {
+            gameOverlay.addEventListener('touchstart', (e) => {
+                if (this.isPlaying && e.cancelable) e.preventDefault();
+                this.handleInput();
+            }, { passive: false });
+        } else {
+            this.canvas.addEventListener('touchstart', (e) => {
+                if (e.cancelable) e.preventDefault();
+                this.handleInput();
+            }, { passive: false });
+        }
         this.canvas.addEventListener('mousedown', (e) => {
             this.handleInput();
         });
