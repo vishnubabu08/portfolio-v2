@@ -41,9 +41,9 @@ export class DinoGame {
             }
         });
         this.canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            if (e.cancelable) e.preventDefault();
             this.handleInput();
-        });
+        }, { passive: false });
         this.canvas.addEventListener('mousedown', (e) => {
             this.handleInput();
         });

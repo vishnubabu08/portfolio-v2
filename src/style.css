@@ -1335,6 +1335,12 @@ h1.hero-title {
   .cursor-outline {
     display: none;
   }
+
+  /* Hide Neural Projection (Profile Card 3D Target) on Mobile as requested */
+  #profile-card-target,
+  .profile-card {
+    display: none !important;
+  }
 }
 
 /* --- LOADING SCREEN --- */
