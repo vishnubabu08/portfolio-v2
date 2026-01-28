@@ -1341,6 +1341,28 @@ h1.hero-title {
   .profile-card {
     display: none !important;
   }
+
+  /* --- MOBILE TOUCH FEEDBACK --- */
+  /* Replicate hover effects as active states for touch */
+  .btn:active,
+  .btn-sm:active {
+    transform: scale(0.95);
+    background: var(--color-primary);
+    color: #000;
+    box-shadow: 0 0 15px var(--color-primary);
+  }
+
+  nav a:active {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+
+  /* Project Card Active State */
+  .project-card:active .front-face {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: var(--color-primary);
+  }
 }
 
 /* --- LOADING SCREEN --- */

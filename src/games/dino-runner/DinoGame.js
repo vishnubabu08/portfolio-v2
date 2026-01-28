@@ -64,15 +64,30 @@ export class DinoGame {
 
     resize() {
         if (!this.canvas) return;
-        // Parent wrapper determines size
         const wrapper = this.canvas.parentElement;
-        this.canvas.width = wrapper.clientWidth;
-        this.canvas.height = wrapper.clientHeight;
 
-        this.groundY = this.canvas.height - 40;
+        // Performance: Cap pixel ratio to 1.5 on mobile to avoid 4K rendering lag
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        this.canvas.width = wrapper.clientWidth * dpr;
+        this.canvas.height = wrapper.clientHeight * dpr;
+
+        // Scale context
+        this.ctx.scale(dpr, dpr);
+
+        // Logic Dimensions (keep virtual 800x600 or similar aspect ratio if needed, or just map to client size)
+        // Here we just use client size for logic to match CSS pixels
+        this.width = wrapper.clientWidth;
+        this.height = wrapper.clientHeight;
+
+        this.groundY = this.height - 40;
+
         if (this.player.y === 0 || this.player.grounded) {
             this.player.y = this.groundY - this.player.height;
         }
+
+        // Redraw immediately to avoid flickering
+        if (!this.isPlaying) this.draw();
     }
 
     start() {
@@ -180,9 +195,9 @@ export class DinoGame {
     }
 
     draw() {
-        // Clear
-        this.ctx.fillStyle = '#0a0a0a'; // Black BG
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Clear (Use logic dimensions)
+        this.ctx.fillStyle = '#0a0a0a';
+        this.ctx.fillRect(0, 0, this.width, this.height);
 
         // Draw Grid Floor (Cyberpunk style)
         this.ctx.strokeStyle = '#222';
@@ -190,17 +205,17 @@ export class DinoGame {
         this.bgOffset = (this.bgOffset - this.gameSpeed) % 40;
 
         // Vertical lines moving
-        for (let x = this.bgOffset; x < this.canvas.width; x += 40) {
+        for (let x = this.bgOffset; x < this.width; x += 40) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, this.groundY);
-            this.ctx.lineTo(x - 100, this.canvas.height); // Perspective slant
+            this.ctx.lineTo(x - 100, this.height); // Perspective slant
             this.ctx.stroke();
         }
 
         // Ground Line
         this.ctx.beginPath();
         this.ctx.moveTo(0, this.groundY);
-        this.ctx.lineTo(this.canvas.width, this.groundY);
+        this.ctx.lineTo(this.width, this.groundY);
         this.ctx.strokeStyle = '#00f0ff';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
@@ -275,13 +290,21 @@ export class DinoGame {
     animate(time) {
         if (!this.isPlaying) return;
 
-        const deltaTime = time - this.lastTime;
-        this.lastTime = time;
+        try {
+            const deltaTime = time - this.lastTime;
+            this.lastTime = time;
 
-        this.update(deltaTime);
-        this.draw();
+            // Cap extremely long frames (e.g., if tab was inactive)
+            if (deltaTime < 100) {
+                this.update(deltaTime);
+                this.draw();
+            }
 
-        this.animationId = requestAnimationFrame(this.animate.bind(this));
+            this.animationId = requestAnimationFrame(this.animate.bind(this));
+        } catch (error) {
+            console.error("Game Error:", error);
+            this.stop();
+        }
     }
 
     spawnObstacle() {
