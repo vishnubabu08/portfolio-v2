@@ -31,6 +31,18 @@ export class SceneManager {
 
         // Track target element for profile
         this.profileTarget = document.getElementById('profile-card-target');
+        // Initialize Paused State
+        this.isPaused = false;
+    }
+
+    stopRendering() {
+        this.isPaused = true;
+    }
+
+    resumeRendering() {
+        this.isPaused = false;
+        // Reset time to avoid jump? Not critical for this scene.
+        this.animate();
     }
 
     init() {
@@ -282,6 +294,8 @@ export class SceneManager {
     }
 
     animate() {
+        if (this.isPaused) return;
+
         requestAnimationFrame(this.animate.bind(this));
 
         // Animation/Update loops

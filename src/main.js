@@ -34,7 +34,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     // Init 3D Scene
-    new SceneManager('webgl-container');
+    const sceneManager = new SceneManager('webgl-container');
+
+    // ... (lines 39-406 skipped in replacement instruction, handled by finding exact context)
+    // Wait, I cannot skip lines in replace_file_content if they are part of the block I am replacing.
+    // I need to use multiple replacements or locate specific blocks.
+
+    // Changing SceneManager init line first.
+
 
     // --- CROSS-CARD VIDEO PREVIEW LOGIC (WITH FLIP) ---
     const projectCards = Array.from(document.querySelectorAll('.project-card'));
@@ -417,6 +424,11 @@ window.addEventListener('DOMContentLoaded', () => {
             gameOverlay.classList.add('active');
             lenis.stop(); // Stop scrolling
 
+            // PAUSE 3D SCENE TO SAVE GPU FOR GAME
+            if (sceneManager && sceneManager.stopRendering) {
+                sceneManager.stopRendering();
+            }
+
             if (!isGameModuleLoaded) {
                 const { DinoGame } = await import('./games/dino-runner/DinoGame.js');
                 dinoGameInstance = new DinoGame('dino-game-canvas');
@@ -436,6 +448,12 @@ window.addEventListener('DOMContentLoaded', () => {
         const closeGame = () => {
             gameOverlay.classList.remove('active');
             lenis.start(); // Resume scrolling
+
+            // RESUME 3D SCENE
+            if (sceneManager && sceneManager.resumeRendering) {
+                sceneManager.resumeRendering();
+            }
+
             if (dinoGameInstance) {
                 dinoGameInstance.stop();
             }
