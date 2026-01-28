@@ -1199,6 +1199,40 @@ h1.hero-title {
   /* ... (keeping other typography unchanged) ... */
 
   /* Hero Section - CENTERED */
+  header {
+    padding: 0.5rem 1rem;
+    height: auto;
+    background: rgba(5, 5, 5, 0.95);
+    flex-direction: column;
+    align-items: center;
+    /* Center align for mobile */
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+  }
+
+  nav ul {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Center align links */
+    width: 100%;
+    padding-left: 0;
+  }
+
+  nav a {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
   #hero {
     padding-left: 0;
     justify-content: center;
