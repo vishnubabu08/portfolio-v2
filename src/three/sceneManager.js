@@ -100,20 +100,29 @@ export class SceneManager {
     }
 
     setupScenes() {
+        const isMobile = window.innerWidth < 768;
+
         // 1. Ghost Head (Soldier Group) - Pass LoadingManager
-        this.soldierGroup = createSoldierScene(this.loadingManager);
-        // Initial Hero Position
-        this.soldierGroup.position.set(1.5, 0, 0);
-        this.scene.add(this.soldierGroup);
+        // SKIP ON MOBILE
+        if (!isMobile) {
+            this.soldierGroup = createSoldierScene(this.loadingManager);
+            // Initial Hero Position
+            this.soldierGroup.position.set(1.5, 0, 0);
+            this.scene.add(this.soldierGroup);
+        }
 
         // 2. Car Showcase - Pass LoadingManager
-        this.carShowcase = createCarShowcase(this.loadingManager);
-        this.carShowcase.position.set(0, -30, 0);
-        this.scene.add(this.carShowcase);
+        // SKIP ON MOBILE
+        if (!isMobile) {
+            this.carShowcase = createCarShowcase(this.loadingManager);
+            this.carShowcase.position.set(0, -30, 0);
+            this.scene.add(this.carShowcase);
 
-        this.carModel = this.carShowcase.userData.carModel;
+            this.carModel = this.carShowcase.userData.carModel;
+        }
 
         // 3. Global Background Particles
+        // Keep particles but maybe reduce count? For now just keep them.
         this.bgParticles = createBackgroundParticles();
         this.scene.add(this.bgParticles);
     }
