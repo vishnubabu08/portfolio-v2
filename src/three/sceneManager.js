@@ -113,13 +113,11 @@ export class SceneManager {
         const isMobile = window.innerWidth < 768;
 
         // 1. Ghost Head (Soldier Group) - Pass LoadingManager
-        // SKIP ON MOBILE
-        if (!isMobile) {
-            this.soldierGroup = createSoldierScene(this.loadingManager);
-            // Initial Hero Position
-            this.soldierGroup.position.set(1.5, 0, 0);
-            this.scene.add(this.soldierGroup);
-        }
+        // ENABLED ON MOBILE (As requested)
+        this.soldierGroup = createSoldierScene(this.loadingManager);
+        // Initial Hero Position
+        this.soldierGroup.position.set(1.5, 0, 0);
+        this.scene.add(this.soldierGroup);
 
         // 2. Car Showcase - Pass LoadingManager
         // SKIP ON MOBILE

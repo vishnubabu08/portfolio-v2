@@ -1342,11 +1342,8 @@ h1.hero-title {
     display: none;
   }
 
-  /* Hide Neural Projection (Profile Card 3D Target) on Mobile as requested */
-  #profile-card-target,
-  .profile-card {
-    display: none !important;
-  }
+  /* Neural Projection: restored as requested */
+  /* #profile-card-target, .profile-card { display: none !important; } */
 
   /* --- MOBILE TOUCH FEEDBACK --- */
   /* Replicate hover effects as active states for touch */
