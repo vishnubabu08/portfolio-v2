@@ -1287,13 +1287,15 @@ h1.hero-title {
 
   /* Contact */
   #contact {
-    padding: 40px 0;
+    padding: 10px 0 40px 0;
+    /* Reduced top padding from 40px */
   }
 
   .showcase-info {
     padding: 1.5rem;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    /* Removed bottom margin */
   }
 
   /* Car Showcase */
@@ -1302,7 +1304,11 @@ h1.hero-title {
     justify-content: center;
     align-items: flex-start;
     /* Move text to top */
-    padding-top: 100px;
+    padding-top: 50px;
+    /* Reduced from 100px since Car is gone */
+    min-height: auto;
+    /* Allow it to shrink */
+    padding-bottom: 1rem;
   }
 
   /* Modal */
