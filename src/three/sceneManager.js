@@ -58,7 +58,7 @@ export class SceneManager {
             }
         };
 
-        this.loadingManager.onLoad = () => {
+        const onFinishedLoading = () => {
             if (loaderScreen) {
                 loaderScreen.classList.add('fade-out');
                 setTimeout(() => {
@@ -67,6 +67,16 @@ export class SceneManager {
             }
         };
 
+        this.loadingManager.onLoad = onFinishedLoading;
+
+        // Mobile Safety: If we skip 3D models (Soldier/Car), the manager has 0 items and onLoad might not fire.
+        // We force a check or timeout to clear the screen.
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+            // Force completion after a short "fake load" to let UI settle
+            setTimeout(onFinishedLoading, 1000);
+        }
+
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x000000); // Deep Black
         this.scene.fog = new THREE.FogExp2(0x000000, 0.02);
@@ -74,7 +84,7 @@ export class SceneManager {
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
 
         // Mobile Adjustment: Move camera back to reduce "zoom" effect in portrait mode
-        const isMobile = window.innerWidth < 768;
+        // isMobile is already defined above
         this.camera.position.set(0, 0, isMobile ? 8 : 5);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true, powerPreference: "high-performance" });
