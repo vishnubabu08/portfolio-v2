@@ -348,18 +348,33 @@ window.addEventListener('DOMContentLoaded', () => {
                 // Show Modal
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Lock Body Scroll
+                lenis.stop(); // Stop Lenis Smooth Scroll
+
+                // PAUSE 3D SCENE TO SAVE GPU (Mobile Freeze Fix)
+                if (sceneManager && sceneManager.stopRendering) {
+                    sceneManager.stopRendering();
+                }
             }
         });
     });
 
     // Close Logic
-    modalCloseBtn.addEventListener('click', () => {
+    const closeModal = () => {
         modal.classList.remove('active');
-    });
+        document.body.style.overflow = ''; // Unlock Body Scroll
+        lenis.start(); // Resume Lenis
+
+        // RESUME 3D SCENE
+        if (sceneManager && sceneManager.resumeRendering) {
+            sceneManager.resumeRendering();
+        }
+    };
+
+    modalCloseBtn.addEventListener('click', closeModal);
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            modal.classList.remove('active');
+            closeModal();
         }
     });
 
