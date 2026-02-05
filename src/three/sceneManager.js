@@ -59,6 +59,11 @@ export class SceneManager {
         };
 
         const onFinishedLoading = () => {
+            // FORCE COMPILATION: Upload textures/shaders to GPU now to prevent scroll hitch later
+            if (this.renderer && this.scene && this.camera) {
+                this.renderer.compile(this.scene, this.camera);
+            }
+
             if (loaderScreen) {
                 loaderScreen.classList.add('fade-out');
                 setTimeout(() => {
