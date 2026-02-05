@@ -61,20 +61,29 @@ export class SceneManager {
         const onFinishedLoading = () => {
             // FORCE COMPILATION: Upload textures/shaders to GPU now to prevent scroll hitch later
             if (this.renderer && this.scene && this.camera) {
-                // TRICK: Move camera to look at the Car (y=-30) to force renderer to compile it
-                // Otherwise, if it's off-screen, compile() might skip it.
+                // TRICK: Multi-Pass Compilation to warm up ALL shaders (Hero, Soldier, Car)
                 const originalPos = this.camera.position.clone();
                 const originalRot = this.camera.rotation.clone();
 
-                // Teleport to Car Showcase
-                this.camera.position.set(0, -30, 10);
-                this.camera.lookAt(0, -30, 0);
+                // 1. Compile Hero View (Start)
+                this.camera.position.set(0, 0, 5);
+                this.camera.lookAt(0, 0, 0);
                 this.camera.updateMatrixWorld();
-
-                // Compile
                 this.renderer.compile(this.scene, this.camera);
 
-                // Restore
+                // 2. Compile Profile View (Visualizing the ghost head close up)
+                this.camera.position.set(1.5, 0, 2);
+                this.camera.lookAt(1.5, 0, 0);
+                this.camera.updateMatrixWorld();
+                this.renderer.compile(this.scene, this.camera);
+
+                // 3. Compile Garage View (Bugatti)
+                this.camera.position.set(0, -30, 8); // Closer look
+                this.camera.lookAt(0, -30, 0);
+                this.camera.updateMatrixWorld();
+                this.renderer.compile(this.scene, this.camera);
+
+                // Restore Original Camera
                 this.camera.position.copy(originalPos);
                 this.camera.rotation.copy(originalRot);
                 this.camera.updateMatrixWorld();
