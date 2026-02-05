@@ -61,7 +61,23 @@ export class SceneManager {
         const onFinishedLoading = () => {
             // FORCE COMPILATION: Upload textures/shaders to GPU now to prevent scroll hitch later
             if (this.renderer && this.scene && this.camera) {
+                // TRICK: Move camera to look at the Car (y=-30) to force renderer to compile it
+                // Otherwise, if it's off-screen, compile() might skip it.
+                const originalPos = this.camera.position.clone();
+                const originalRot = this.camera.rotation.clone();
+
+                // Teleport to Car Showcase
+                this.camera.position.set(0, -30, 10);
+                this.camera.lookAt(0, -30, 0);
+                this.camera.updateMatrixWorld();
+
+                // Compile
                 this.renderer.compile(this.scene, this.camera);
+
+                // Restore
+                this.camera.position.copy(originalPos);
+                this.camera.rotation.copy(originalRot);
+                this.camera.updateMatrixWorld();
             }
 
             if (loaderScreen) {
