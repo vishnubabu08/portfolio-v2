@@ -1523,6 +1523,24 @@ html {
   }
 }
 
+/* --- LARGE SCREENS / HIGH RES DISPLAYS --- */
+@media (min-width: 1600px) {
+
+  .about-grid .glass-panel,
+  .about-grid .profile-card {
+    min-height: 60vh;
+    /* Significantly taller on big screens */
+    height: 100%;
+  }
+
+  /* Center the text vertically in the expanded space */
+  .profile-text-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
 .cursor-dot {
   width: 8px;
   height: 8px;
