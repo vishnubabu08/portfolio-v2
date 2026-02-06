@@ -77,7 +77,11 @@ export class SceneManager {
                 this.camera.updateMatrixWorld();
                 this.renderer.render(this.scene, this.camera);
 
-                // Pass 3 (Garage) REMOVED - Lazy Loading active
+                // 3. Render Garage View (Bugatti)
+                this.camera.position.set(0, -30, 8); // Closer look
+                this.camera.lookAt(0, -30, 0);
+                this.camera.updateMatrixWorld();
+                this.renderer.render(this.scene, this.camera);
 
                 // Restore Original Camera
                 this.camera.position.copy(originalPos);
@@ -89,8 +93,6 @@ export class SceneManager {
                 loaderScreen.classList.add('fade-out');
                 setTimeout(() => {
                     loaderScreen.style.display = 'none';
-                    // Initialize Lazy Loading Watcher after main load
-                    this.setupLazyLoad();
                 }, 500);
             }
         };
@@ -135,36 +137,6 @@ export class SceneManager {
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
         this.scene.add(ambientLight);
-    }
-
-    setupLazyLoad() {
-        // Observe the showcase section
-        const showcaseSection = document.getElementById('showcase');
-
-
-        if (!showcaseSection) return;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Trigger Load
-                    if (this.carShowcase && this.carShowcase.userData.loadModel) {
-                        this.carShowcase.userData.loadModel(() => {
-                            // On Complete - Model loaded
-                            // Solar System automatically removed by loadModel callback
-                        });
-
-                        // Clear the function to prevent re-load
-                        this.carShowcase.userData.loadModel = null;
-
-                        // Stop observing
-                        observer.disconnect();
-                    }
-                }
-            });
-        }, { threshold: 0.1 }); // Load when 10% visible
-
-        observer.observe(showcaseSection);
     }
 
     setupScenes() {
@@ -376,12 +348,8 @@ export class SceneManager {
         requestAnimationFrame(this.animate.bind(this));
 
         // Animation/Update loops
-        const time = performance.now() * 0.001;
         if (this.soldierGroup && this.soldierGroup.userData.update) {
-            this.soldierGroup.userData.update(time);
-        }
-        if (this.carShowcase && this.carShowcase.userData.update) {
-            this.carShowcase.userData.update(time);
+            this.soldierGroup.userData.update(performance.now() * 0.001);
         }
 
         // Trigger manual position update for smoothness
