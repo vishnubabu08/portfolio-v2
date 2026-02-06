@@ -34,28 +34,42 @@ export function createCarShowcase(loadingManager) {
     function createSolarSystem() {
         const sysGroup = new THREE.Group();
 
-        // Sun (Neon Core)
-        const sunGeo = new THREE.IcosahedronGeometry(1.5, 1);
-        const sunMat = new THREE.MeshBasicMaterial({
+        // Sun (Solid Neon Core)
+        const sunGeo = new THREE.SphereGeometry(1.5, 64, 64);
+        const sunMat = new THREE.MeshStandardMaterial({
             color: 0x00f0ff,
-            wireframe: true
+            emissive: 0x00aaff,
+            emissiveIntensity: 2,
+            roughness: 0.1,
+            metalness: 0.8
         });
         const sun = new THREE.Mesh(sunGeo, sunMat);
         sysGroup.add(sun);
 
-        // Planet 1
-        const p1 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 0), new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true }));
+        // Planet 1 (Solid)
+        const p1 = new THREE.Mesh(
+            new THREE.SphereGeometry(0.4, 32, 32),
+            new THREE.MeshStandardMaterial({ color: 0xff00ff, roughness: 0.4, metalness: 0.6 })
+        );
         p1.position.set(3, 0, 0);
         sysGroup.add(p1);
 
-        // Planet 2
-        const p2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.6, 0), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true }));
+        // Planet 2 (Solid)
+        const p2 = new THREE.Mesh(
+            new THREE.SphereGeometry(0.6, 32, 32),
+            new THREE.MeshStandardMaterial({ color: 0x00ff00, roughness: 0.4, metalness: 0.6 })
+        );
         p2.position.set(-4, 1, 2);
         sysGroup.add(p2);
 
-        // Orbit Ring
-        const ringGeo = new THREE.TorusGeometry(3, 0.02, 16, 100);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.3 });
+        // Orbit Ring (Solid but transparent)
+        const ringGeo = new THREE.TorusGeometry(3, 0.05, 16, 100);
+        const ringMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            emissive: 0x222222
+        });
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = Math.PI / 2;
         sysGroup.add(ring);
