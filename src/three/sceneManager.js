@@ -140,7 +140,7 @@ export class SceneManager {
     setupLazyLoad() {
         // Observe the showcase section
         const showcaseSection = document.getElementById('showcase');
-        const spinner = document.getElementById('car-loader');
+
 
         if (!showcaseSection) return;
 
@@ -149,13 +149,9 @@ export class SceneManager {
                 if (entry.isIntersecting) {
                     // Trigger Load
                     if (this.carShowcase && this.carShowcase.userData.loadModel) {
-                        // Show Spinner
-                        if (spinner) spinner.style.display = 'block';
-
                         this.carShowcase.userData.loadModel(() => {
-                            // On Complete
-                            if (spinner) spinner.style.display = 'none';
-                            // Ensure materials update?
+                            // On Complete - Model loaded
+                            // Solar System automatically removed by loadModel callback
                         });
 
                         // Clear the function to prevent re-load
@@ -380,8 +376,12 @@ export class SceneManager {
         requestAnimationFrame(this.animate.bind(this));
 
         // Animation/Update loops
+        const time = performance.now() * 0.001;
         if (this.soldierGroup && this.soldierGroup.userData.update) {
-            this.soldierGroup.userData.update(performance.now() * 0.001);
+            this.soldierGroup.userData.update(time);
+        }
+        if (this.carShowcase && this.carShowcase.userData.update) {
+            this.carShowcase.userData.update(time);
         }
 
         // Trigger manual position update for smoothness

@@ -28,6 +28,46 @@ export function createCarShowcase(loadingManager) {
     // Attach to userData so SceneManager can rotate it
     group.userData.carModel = carGroup;
 
+    // --- SOLAR SYSTEM PLACEHOLDER ---
+    let solarSystem = new THREE.Group();
+
+    function createSolarSystem() {
+        const sysGroup = new THREE.Group();
+
+        // Sun (Neon Core)
+        const sunGeo = new THREE.IcosahedronGeometry(1.5, 1);
+        const sunMat = new THREE.MeshBasicMaterial({
+            color: 0x00f0ff,
+            wireframe: true
+        });
+        const sun = new THREE.Mesh(sunGeo, sunMat);
+        sysGroup.add(sun);
+
+        // Planet 1
+        const p1 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 0), new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true }));
+        p1.position.set(3, 0, 0);
+        sysGroup.add(p1);
+
+        // Planet 2
+        const p2 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.6, 0), new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true }));
+        p2.position.set(-4, 1, 2);
+        sysGroup.add(p2);
+
+        // Orbit Ring
+        const ringGeo = new THREE.TorusGeometry(3, 0.02, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x333333, transparent: true, opacity: 0.3 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        sysGroup.add(ring);
+
+        return sysGroup;
+    }
+
+    solarSystem = createSolarSystem();
+    solarSystem.position.set(0, 1, 0); // Slight lift
+    carGroup.add(solarSystem);
+
+
     // LAZY LOAD LOGIC - Triggered by IntersectionObserver
     group.userData.loadModel = (onLoadCallback) => {
         const loader = new GLTFLoader();
@@ -35,6 +75,13 @@ export function createCarShowcase(loadingManager) {
         const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
 
         loader.load(modelPath, (gltf) => {
+            // REMOVE PLACEHOLDER
+            if (solarSystem) {
+                carGroup.remove(solarSystem);
+                // Optional: dispose geometries/materials
+                solarSystem = null;
+            }
+
             const model = gltf.scene;
 
             // Initial transforms
@@ -48,12 +95,8 @@ export function createCarShowcase(loadingManager) {
                 if (child.isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
-
-                    // If the car looks dull, we might need to manually tweak body paint here
-                    // For now, let's assume the GLB has decent PBR
-                    // Just ensuring envMap intensity is up
                     if (child.material) {
-                        child.material.envMapIntensity = 1.5; // Balanced
+                        child.material.envMapIntensity = 1.5;
                         child.material.needsUpdate = true;
                     }
                 }
@@ -65,6 +108,14 @@ export function createCarShowcase(loadingManager) {
         }, undefined, (error) => {
             console.error('An error occurred loading the Car model:', error);
         });
+    };
+
+    // UPDATE RENDER LOOP (Rotates Solar System)
+    group.userData.update = (time) => {
+        if (solarSystem) {
+            solarSystem.rotation.y = time * 0.5;
+            solarSystem.rotation.x = Math.sin(time * 0.5) * 0.1;
+        }
     };
 
 
