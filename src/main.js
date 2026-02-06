@@ -3,8 +3,12 @@ import { SceneManager } from './three/sceneManager.js';
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { injectSpeedInsights } from '@vercel/speed-insights';
 
 gsap.registerPlugin(ScrollTrigger)
+
+// Initialize Vercel Speed Insights
+injectSpeedInsights();
 
 window.addEventListener('DOMContentLoaded', () => {
     // --- SMOOTH SCROLLING (LENIS) ---
