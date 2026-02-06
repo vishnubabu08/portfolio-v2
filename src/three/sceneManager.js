@@ -16,6 +16,7 @@ export class SceneManager {
         this.init();
         this.setupScenes();
         this.setupScrollAnimations();
+        this.setupLazyLoad();
         this.setupInteraction();
         this.animate();
 
@@ -167,15 +168,48 @@ export class SceneManager {
         this.scene.add(this.bgParticles);
     }
 
+    setupLazyLoad() {
+        const showcase = document.getElementById('showcase');
+        const spinner = document.getElementById('car-loader');
+        if (!showcase) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start Loading
+                    if (this.carShowcase && this.carShowcase.userData.loadModel) {
+                        // Ensure Spinner is Visible
+                        if (spinner) spinner.style.display = 'block';
+
+                        this.carShowcase.userData.loadModel(() => {
+                            // Model Loaded
+                            if (spinner) spinner.style.display = 'none';
+                        });
+
+                        // Clear to prevent multiple calls
+                        this.carShowcase.userData.loadModel = null;
+                        observer.disconnect();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(showcase);
+    }
+
     setupScrollAnimations() {
         // --- ANIMATION TIMELINE ---
+
+        // Initialize Target Vectors for Smooth Damping
+        this.targetCameraPos = this.camera.position.clone();
+        this.targetCameraRot = { x: this.camera.rotation.x, y: this.camera.rotation.y, z: this.camera.rotation.z };
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: "body",
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 1,
+                scrub: 1.5, // Slight scrub lag for GSAP, plus our manual damping
                 onUpdate: (self) => {
                     this.scrollProgress = self.progress;
                     this.updateSoldierPosition();
@@ -184,34 +218,34 @@ export class SceneManager {
         });
 
         // 1. Move Camera to Garage (Global movement)
-        // We use specific timings to ensure the camera reaches the garage at the right scroll time
+        // We act on targetCameraPos instead of camera.position direct
 
         // Phase 1: Hero -> About (0 - 0.3)
         // Camera stays relatively stable or slight movement, handled by parallax/default
 
         // Phase 2: Approach Garage (0.3 - 0.7)
-        tl.to(this.camera.position, {
+        tl.to(this.targetCameraPos, {
             x: 4,
             y: -28, // Just above car floor (-30)
             z: 6,
             duration: 2
         }, 1); // Start at t=1
 
-        tl.to(this.camera.rotation, {
+        tl.to(this.targetCameraRot, {
             x: -0.2,
             y: 0.5,
             duration: 2
         }, 1);
 
         // Phase 3: Final Showcase Position (0.7 - 1.0)
-        tl.to(this.camera.position, {
+        tl.to(this.targetCameraPos, {
             x: 0,
             y: -28.5,
             z: 7,
             duration: 1
         }, 3); // Start at t=3
 
-        tl.to(this.camera.rotation, { x: 0, y: 0, duration: 1 }, 3);
+        tl.to(this.targetCameraRot, { x: 0, y: 0, duration: 1 }, 3);
     }
 
     // --- KEY LOGIC: Fit 3D Object to DOM Element ---
@@ -346,6 +380,20 @@ export class SceneManager {
         if (this.isPaused) return;
 
         requestAnimationFrame(this.animate.bind(this));
+
+        // Smooth Damping for Camera
+        if (this.targetCameraPos) {
+            // Position Lerp (Soft Spring)
+            this.camera.position.lerp(this.targetCameraPos, 0.05);
+
+            // Rotation Lerp (via Quaternion Slerp)
+            if (this.targetCameraRot) {
+                const targetQuat = new THREE.Quaternion().setFromEuler(
+                    new THREE.Euler(this.targetCameraRot.x, this.targetCameraRot.y, this.targetCameraRot.z)
+                );
+                this.camera.quaternion.slerp(targetQuat, 0.05);
+            }
+        }
 
         // Animation/Update loops
         if (this.soldierGroup && this.soldierGroup.userData.update) {

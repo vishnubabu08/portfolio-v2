@@ -28,39 +28,40 @@ export function createCarShowcase(loadingManager) {
     // Attach to userData so SceneManager can rotate it
     group.userData.carModel = carGroup;
 
-    const loader = new GLTFLoader(loadingManager);
-    // Path relative to /public
-    const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
+    // LAZY LOAD LOGIC - Triggered by IntersectionObserver
+    group.userData.loadModel = (onLoadCallback) => {
+        const loader = new GLTFLoader();
+        // Path relative to /public
+        const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
 
-    loader.load(modelPath, (gltf) => {
-        const model = gltf.scene;
+        loader.load(modelPath, (gltf) => {
+            const model = gltf.scene;
 
-        // Initial transforms
-        const isMobile = window.innerWidth < 768;
-        const scale = isMobile ? 0.45 : 0.8;
-        model.scale.set(scale, scale, scale);
-        model.position.set(0, 0, 0);
+            // Initial transforms
+            const isMobile = window.innerWidth < 768;
+            const scale = isMobile ? 0.45 : 0.8;
+            model.scale.set(scale, scale, scale);
+            model.position.set(0, 0, 0);
 
-        // Enhance Materials
-        model.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-
-                // If the car looks dull, we might need to manually tweak body paint here
-                // For now, let's assume the GLB has decent PBR
-                // Just ensuring envMap intensity is up
-                if (child.material) {
-                    child.material.envMapIntensity = 1.5; // Balanced
-                    child.material.needsUpdate = true;
+            // Enhance Materials
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    if (child.material) {
+                        child.material.envMapIntensity = 1.5;
+                        child.material.needsUpdate = true;
+                    }
                 }
-            }
-        });
+            });
 
-        carGroup.add(model);
-    }, undefined, (error) => {
-        console.error('An error occurred loading the Car model:', error);
-    });
+            carGroup.add(model);
+            if (onLoadCallback) onLoadCallback();
+
+        }, undefined, (error) => {
+            console.error('An error occurred loading the Car model:', error);
+        });
+    };
 
 
     // --- LIGHTING (Garage specific) ---
