@@ -16,6 +16,7 @@ export class SceneManager {
         this.init();
         this.setupScenes();
         this.setupScrollAnimations();
+        this.setupLazyLoad();
         this.setupInteraction();
         this.animate();
 
@@ -359,6 +360,20 @@ export class SceneManager {
         if (this.isPaused) return;
 
         requestAnimationFrame(this.animate.bind(this));
+
+        // Smooth Damping for Camera
+        if (this.targetCameraPos) {
+            // Position Lerp (Soft Spring)
+            this.camera.position.lerp(this.targetCameraPos, 0.05);
+
+            // Rotation Lerp (via Quaternion Slerp)
+            if (this.targetCameraRot) {
+                const targetQuat = new THREE.Quaternion().setFromEuler(
+                    new THREE.Euler(this.targetCameraRot.x, this.targetCameraRot.y, this.targetCameraRot.z)
+                );
+                this.camera.quaternion.slerp(targetQuat, 0.05);
+            }
+        }
 
         // Animation/Update loops
         if (this.soldierGroup && this.soldierGroup.userData.update) {
