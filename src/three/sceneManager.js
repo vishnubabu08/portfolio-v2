@@ -16,7 +16,6 @@ export class SceneManager {
         this.init();
         this.setupScenes();
         this.setupScrollAnimations();
-        this.setupLazyLoad();
         this.setupInteraction();
         this.animate();
 
@@ -146,37 +145,6 @@ export class SceneManager {
         // Keep particles but maybe reduce count? For now just keep them.
         this.bgParticles = createBackgroundParticles();
         this.scene.add(this.bgParticles);
-    }
-
-    setupLazyLoad() {
-        const showcase = document.getElementById('showcase');
-        const triggerSection = document.getElementById('mini-projects'); // Load when "Side Ops" appears
-        const spinner = document.getElementById('car-loader');
-
-        if (!showcase || !triggerSection) return;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Start Loading
-                    if (this.carShowcase && this.carShowcase.userData.loadModel) {
-                        // Ensure Spinner is Visible (in the showcase section)
-                        if (spinner) spinner.style.display = 'block';
-
-                        this.carShowcase.userData.loadModel(() => {
-                            // Model Loaded
-                            if (spinner) spinner.style.display = 'none';
-                        });
-
-                        // Clear to prevent multiple calls
-                        this.carShowcase.userData.loadModel = null;
-                        observer.disconnect();
-                    }
-                }
-            });
-        }, { threshold: 0.1 });
-
-        observer.observe(triggerSection);
     }
 
     setupScrollAnimations() {
