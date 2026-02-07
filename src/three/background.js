@@ -101,9 +101,9 @@ export function createBackgroundParticles() {
 
     for (let i = 0; i < particlesCount * 3; i += 3) {
         // Spread across a very large area to cover the camera movement
-        posArray[i] = (Math.random() - 0.5) * 60;   // X: Wide
-        posArray[i + 1] = (Math.random() - 0.5) * 60; // Y: Tall
-        posArray[i + 2] = (Math.random() - 0.5) * 40; // Z: Deep
+        posArray[i] = (Math.random() - 0.5) * 100;   // X: Wider
+        posArray[i + 1] = (Math.random() - 0.5) * 80; // Y: Taller (-40 to 40)
+        posArray[i + 2] = (Math.random() - 0.5) * 60; // Z: Deeper
     }
 
     const particlesGeo = new THREE.BufferGeometry();
@@ -125,17 +125,17 @@ export function createBackgroundParticles() {
         const positions = particlesMesh.geometry.attributes.position.array;
         for (let i = 0; i < particlesCount; i++) {
             let i3 = i * 3;
-            positions[i3 + 1] += 0.005; // Constant slow rise
+            positions[i3 + 1] += 0.05; // FASTER Rise (was 0.005)
 
-            // Loop vertically
-            if (positions[i3 + 1] > 30) {
-                positions[i3 + 1] = -30;
+            // Loop vertically (Reset to bottom)
+            if (positions[i3 + 1] > 40) {
+                positions[i3 + 1] = -40; // Expanded range (-40 to 40)
             }
         }
         particlesMesh.geometry.attributes.position.needsUpdate = true;
 
-        // Gentle rotation of entire system
-        particlesMesh.rotation.y = time * 0.05;
+        // Rotation removed for pure vertical flow
+        // particlesMesh.rotation.y = time * 0.05;
     };
 
     return particlesMesh;
