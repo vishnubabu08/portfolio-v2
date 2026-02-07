@@ -60,34 +60,14 @@ export class SceneManager {
         };
 
         const onFinishedLoading = () => {
-            // FORCE COMPILATION: Upload textures/shaders to GPU now to prevent scroll hitch later
+            // FORCE COMPILATION: Removed aggressive multi-pass render.
+            // On low-end devices, synchronous rendering here causes the UI to freeze ("Stuck on Initializing").
+            // We rely on the first frame of the animation loop to handle compilation naturally.
+
+            // Just ensure everything is ready
             if (this.renderer && this.scene && this.camera) {
-                // TRICK: Multi-Pass Compilation to warm up ALL shaders (Hero, Soldier, Car)
-                const originalPos = this.camera.position.clone();
-                const originalRot = this.camera.rotation.clone();
-
-                // 1. Render Hero View (Start)
-                this.camera.position.set(0, 0, 5);
-                this.camera.lookAt(0, 0, 0);
-                this.camera.updateMatrixWorld();
-                this.renderer.render(this.scene, this.camera);
-
-                // 2. Render Profile View (Visualizing the ghost head close up)
-                this.camera.position.set(1.5, 0, 2);
-                this.camera.lookAt(1.5, 0, 0);
-                this.camera.updateMatrixWorld();
-                this.renderer.render(this.scene, this.camera);
-
-                // 3. Render Garage View (Bugatti)
-                this.camera.position.set(0, -30, 8); // Closer look
-                this.camera.lookAt(0, -30, 0);
-                this.camera.updateMatrixWorld();
-                this.renderer.render(this.scene, this.camera);
-
-                // Restore Original Camera
-                this.camera.position.copy(originalPos);
-                this.camera.rotation.copy(originalRot);
-                this.camera.updateMatrixWorld();
+                // Optional: A single compile call if needed, but standard render loop is usually sufficient.
+                // this.renderer.compile(this.scene, this.camera);
             }
 
             if (loaderScreen) {
