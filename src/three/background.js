@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export function createBackgroundParticles() {
-    const particlesCount = 12000; // Restored to 12000
+    const particlesCount = 18000; // Increased to 18000 for density behind details
     const posArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i += 3) {
@@ -15,7 +15,7 @@ export function createBackgroundParticles() {
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
     const particlesMat = new THREE.PointsMaterial({
-        size: 0.05,      // Restored size
+        size: 0.05,      // Maintained size
         color: 0x00f0ff,
         transparent: true,
         opacity: 0.6,
@@ -30,17 +30,14 @@ export function createBackgroundParticles() {
         const positions = particlesMesh.geometry.attributes.position.array;
         for (let i = 0; i < particlesCount; i++) {
             let i3 = i * 3;
-            positions[i3 + 1] += 0.05; // FASTER Rise
+            positions[i3 + 1] += 0.015; // Slowed down from 0.05 (Smoother flow)
 
             // Loop vertically (Reset to bottom)
             if (positions[i3 + 1] > 20) {
-                positions[i3 + 1] = -60; // Reset to -60
+                positions[i3 + 1] = -60;
             }
         }
         particlesMesh.geometry.attributes.position.needsUpdate = true;
-
-        // Rotation removed for pure vertical flow
-        // particlesMesh.rotation.y = time * 0.05;
     };
 
     return particlesMesh;
