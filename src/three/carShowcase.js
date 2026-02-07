@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 export function createCarShowcase(loadingManager) {
     const group = new THREE.Group();
@@ -31,8 +32,14 @@ export function createCarShowcase(loadingManager) {
     // LAZY LOAD LOGIC - Triggered by IntersectionObserver
     group.userData.loadModel = (onLoadCallback) => {
         const loader = new GLTFLoader();
+
+        // Setup Draco Loader
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('/draco/');
+        loader.setDRACOLoader(dracoLoader);
+
         // Path relative to /public
-        const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
+        const modelPath = '/custom-bugatti-bolide-concept-2020/source/bugatti-optimized.glb';
 
         loader.load(modelPath, (gltf) => {
             const model = gltf.scene;
@@ -43,11 +50,20 @@ export function createCarShowcase(loadingManager) {
             model.scale.set(scale, scale, scale);
             model.position.set(0, 0, 0);
 
-            // Enhance Materials
+            // Enhance Materials & Optimize Shadows
             model.traverse((child) => {
                 if (child.isMesh) {
-                    child.castShadow = true;
+                    // OPTIMIZATION: Only cast shadows from the Body, not every screw
+                    // We check if geometry is large enough or just enable for everything if name check is hard.
+                    // For now, let's keep it simple but maybe disable for very small objects if we could.
+                    // Actually, simple bounding sphere check?
+                    if (child.geometry.boundingSphere && child.geometry.boundingSphere.radius > 0.5) {
+                        child.castShadow = true;
+                    } else {
+                        child.castShadow = false;
+                    }
                     child.receiveShadow = true;
+
                     if (child.material) {
                         child.material.envMapIntensity = 1.5;
                         child.material.needsUpdate = true;
@@ -65,18 +81,19 @@ export function createCarShowcase(loadingManager) {
 
 
     // --- LIGHTING (Garage specific) ---
-    // Ceiling Lights
+    // Ceiling Lights - OPTIMIZED: Replaced RectAreaLight (Expensive) with PointLight (Cheap)
     const glowMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
     for (let i = 0; i < 3; i++) {
+        // Visual Strips
         const stripGeo = new THREE.BoxGeometry(0.5, 0.1, 10);
         const stripMesh = new THREE.Mesh(stripGeo, glowMaterial);
         stripMesh.position.set((i - 1) * 5, 6, 0);
         group.add(stripMesh);
 
-        const rectLight = new THREE.RectAreaLight(0x00f0ff, 15, 0.5, 10); // Balanced to 15
-        rectLight.position.set((i - 1) * 5, 5.9, 0);
-        rectLight.lookAt((i - 1) * 5, 0, 0);
-        group.add(rectLight);
+        // Optimized Light Source (Point instead of Rect)
+        const pointLight = new THREE.PointLight(0x00f0ff, 15, 10); // Decay distance 10
+        pointLight.position.set((i - 1) * 5, 5.0, 0);
+        group.add(pointLight);
     }
 
     // Underglow
@@ -89,6 +106,9 @@ export function createCarShowcase(loadingManager) {
     keyLight.position.set(5, 8, 5);
     keyLight.lookAt(0, 0, 0);
     keyLight.penumbra = 0.5;
+    keyLight.castShadow = true; // Only this main light casts shadow
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
     group.add(keyLight);
 
     const fillLight = new THREE.SpotLight(0x00f0ff, 6); // Balanced to 6
