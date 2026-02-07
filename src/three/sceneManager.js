@@ -147,6 +147,35 @@ export class SceneManager {
         this.scene.add(this.bgParticles);
     }
 
+    setupLazyLoad() {
+        const showcase = document.getElementById('showcase');
+        const spinner = document.getElementById('car-loader');
+        if (!showcase) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start Loading
+                    if (this.carShowcase && this.carShowcase.userData.loadModel) {
+                        // Ensure Spinner is Visible
+                        if (spinner) spinner.style.display = 'block';
+
+                        this.carShowcase.userData.loadModel(() => {
+                            // Model Loaded
+                            if (spinner) spinner.style.display = 'none';
+                        });
+
+                        // Clear to prevent multiple calls
+                        this.carShowcase.userData.loadModel = null;
+                        observer.disconnect();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(showcase);
+    }
+
     setupScrollAnimations() {
         // --- ANIMATION TIMELINE ---
 
@@ -330,20 +359,6 @@ export class SceneManager {
         if (this.isPaused) return;
 
         requestAnimationFrame(this.animate.bind(this));
-
-        // Smooth Damping for Camera
-        if (this.targetCameraPos) {
-            // Position Lerp (Soft Spring)
-            this.camera.position.lerp(this.targetCameraPos, 0.05);
-
-            // Rotation Lerp (via Quaternion Slerp)
-            if (this.targetCameraRot) {
-                const targetQuat = new THREE.Quaternion().setFromEuler(
-                    new THREE.Euler(this.targetCameraRot.x, this.targetCameraRot.y, this.targetCameraRot.z)
-                );
-                this.camera.quaternion.slerp(targetQuat, 0.05);
-            }
-        }
 
         // Animation/Update loops
         if (this.soldierGroup && this.soldierGroup.userData.update) {
