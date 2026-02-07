@@ -380,6 +380,10 @@ export class SceneManager {
             this.soldierGroup.userData.update(performance.now() * 0.001);
         }
 
+        if (this.bgParticles && this.bgParticles.userData.update) {
+            this.bgParticles.userData.update(performance.now() * 0.001);
+        }
+
         // Trigger manual position update for smoothness
         this.updateSoldierPosition();
 
