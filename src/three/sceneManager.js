@@ -150,15 +150,17 @@ export class SceneManager {
 
     setupLazyLoad() {
         const showcase = document.getElementById('showcase');
+        const triggerSection = document.getElementById('mini-projects'); // Load when "Side Ops" appears
         const spinner = document.getElementById('car-loader');
-        if (!showcase) return;
+
+        if (!showcase || !triggerSection) return;
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     // Start Loading
                     if (this.carShowcase && this.carShowcase.userData.loadModel) {
-                        // Ensure Spinner is Visible
+                        // Ensure Spinner is Visible (in the showcase section)
                         if (spinner) spinner.style.display = 'block';
 
                         this.carShowcase.userData.loadModel(() => {
@@ -174,7 +176,7 @@ export class SceneManager {
             });
         }, { threshold: 0.1 });
 
-        observer.observe(showcase);
+        observer.observe(triggerSection);
     }
 
     setupScrollAnimations() {
