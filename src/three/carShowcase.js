@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 export function createCarShowcase(loadingManager) {
     const group = new THREE.Group();
@@ -33,13 +32,8 @@ export function createCarShowcase(loadingManager) {
     group.userData.loadModel = (onLoadCallback) => {
         const loader = new GLTFLoader();
 
-        // Setup Draco Loader (Required for HQ Optimization)
-        const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath('/draco/');
-        loader.setDRACOLoader(dracoLoader);
-
         // Path relative to /public
-        const modelPath = '/custom-bugatti-bolide-concept-2020/source/bugatti-hq-draco.glb';
+        const modelPath = '/custom-bugatti-bolide-concept-2020/source/Custom Bugatti Bolide Concept (2020).glb';
 
         loader.load(modelPath, (gltf) => {
             const model = gltf.scene;

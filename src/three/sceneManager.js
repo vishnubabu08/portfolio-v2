@@ -102,7 +102,7 @@ export class SceneManager {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         // OPTIMIZATION: Cap Pixel Ratio to 1.5 max (or 1 on mobile) to reduce lag on high-res screens
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
+        this.renderer.setPixelRatio(window.devicePixelRatio);
 
         this.renderer.shadowMap.enabled = !isMobile; // Disable shadows on mobile for performance
         if (!isMobile) {
